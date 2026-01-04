@@ -365,6 +365,14 @@ const checkProfit = async () => {
       const hoursUntilShort = getHoursUntilShortZone()
       const dropFromPeak = ((state.tpZonePeakPrice - midPrice) / state.tpZonePeakPrice) * 100
       const belowEntry = midPrice < state.entryPrice
+      const trailingStopPrice = state.tpZonePeakPrice * (1 - TP_ZONE_TRAILING_STOP_PCT / 100)
+
+      log('tp-zone', {
+        price: midPrice.toFixed(0),
+        peak: state.tpZonePeakPrice.toFixed(0),
+        closeAt: trailingStopPrice.toFixed(0),
+        floor: state.entryPrice.toFixed(0)
+      })
 
       if (dropFromPeak >= TP_ZONE_TRAILING_STOP_PCT || hoursUntilShort <= TP_ZONE_HOURS_THRESHOLD || belowEntry) {
         const reason = belowEntry ? 'below-entry' : dropFromPeak >= TP_ZONE_TRAILING_STOP_PCT ? 'trailing-stop' : 'time-exit'
@@ -383,6 +391,18 @@ const checkProfit = async () => {
       }
       return
     }
+
+    const targetPrice = position.side === 'long'
+      ? state.entryPrice * (1 + PROFIT_TARGET_PCT / 100)
+      : state.entryPrice * (1 - PROFIT_TARGET_PCT / 100)
+
+    log('monitor', {
+      side: position.side,
+      price: midPrice.toFixed(0),
+      entry: state.entryPrice.toFixed(0),
+      target: targetPrice.toFixed(0),
+      pct: profitPct.toFixed(2)
+    })
 
     if (profitPct >= PROFIT_TARGET_PCT) {
       if (position.side === 'long') {
