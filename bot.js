@@ -620,8 +620,9 @@ try {
   console.log('State:', { zone: state.zone, entryPrice: state.entryPrice, inTpZone: state.inTpZone })
 
   analyzeAndUpdateConfig()
-  startPriceMonitor()
 } catch (err) {
   console.error('Startup check failed:', err.message)
-  console.log('Make sure you have deposited collateral to your subaccount')
+  console.log('Will keep retrying via price monitor...')
 }
+
+startPriceMonitor()
