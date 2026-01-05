@@ -452,7 +452,7 @@ const recordPriceSnapshot = async () => {
       price: mid
     })
 
-    const cutoff = now.minus({ days: 3 }).toISO()
+    const cutoff = now.minus({ days: 10 }).toISO()
     data.snapshots = data.snapshots.filter(s => s.ts > cutoff)
     saveMarketData(data)
   } catch (err) {
